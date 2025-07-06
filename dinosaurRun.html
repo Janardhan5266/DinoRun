@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dinosaur Run</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            ;
+        }
+
+        canvas {
+
+            position: fixed;
+        }
+
+        .score {
+            width: 100;
+            height: 50;
+            color: rgb(105, 105, 105);
+            position: fixed;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .life {
+            width: 100;
+            height: 50;
+            translate: 80vw 0;
+            color: rgb(105, 105, 105);
+            position: fixed;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+
+        .endcard {
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 300px;
+            height: 150px;
+            border: 2px solid rgba(255, 255, 0, 0.458);
+            border-radius: 8px;
+            background-color: rgba(106, 106, 106, 0.34);
+            color: rgba(255, 30, 0, 0.551);
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            translate: -50% -50%;
+
+        }
+
+        .displayscore {
+            color: yellow;
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding: 5px;
+            border-radius: 4px;
+            background-color: rgba(0, 0, 0, 0.474);
+        }
+
+        .restart-button {
+            width: 100px;
+            height: 30px;
+            color: white;
+            background-color: green;
+            border: 2px solid rgb(141, 141, 141);
+
+            border-radius: 4px;
+            text-align: center;
+            text-transform: uppercase;
+            padding: 5px;
+        }
+
+        .restart-button:hover {
+            transform: scale(120%);
+            font-weight: 600;
+        }
+
+        .restart-button:active {
+            background-color: rgb(0, 80, 0);
+            border: 4px ridge black;
+        }
+    </style>
+
+</head>
+
+<body>
+    <canvas></canvas>
+
+    <script>
+        const canvas = document.querySelector('canvas');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const c = canvas.getContext('2d');
+
+        let unispeed = 6;
+        let score = 0;
+        let s = 0;
+        const body = document.querySelector('body');
+        let Score = document.createElement('div');
+        body.appendChild(Score);
+        Score.className = 'score';
+        Score.innerHTML = `SCORE:${score}`;
+
+        let color = 'rgb(200,200,200)'
+        let x1 = 0;
+        let x2 = 0;
+        let x3 = 0;
+        let x4 = 0;
+
+       
+
+
+       let soilarray = [];
+       let trees = [];
+       let stars = [];
+
+
+        let soilcont = 500;
+        let jump = -15;
+
+       
+        addEventListener('mousedown', function () {
+
+            if (dino.velocity == 0) {
+
+                dino.velocity = jump;
+            }
+
+        });
+
+           addEventListener('keydown', function () {
+
+            if (dino.velocity == 0) {
+
+                dino.velocity = jump;
+            }
+
+        });
+
+            addEventListener('touchstart', function () {
+
+            if (dino.velocity == 0) {
+
+                dino.velocity = jump;
+            }
+
+        });
+       
+
+        addEventListener('resize', function () {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            location.reload();
+        });
+
+        let friction = 0.99;
+        let gravity = 0.6;
+        class Dinosaur {
+            constructor(x, y, radius, color, velocity) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.color = color;
+                this.velocity = velocity;
+                this.i = unispeed / 5;
+                this.j = unispeed / 25;
+                this.k = unispeed / 10;
+
+            }
+
+            draw() {
+
+
+
+                c.lineWidth = 3;
+                c.beginPath();
+                c.strokeStyle = this.color;
+                c.fillStyle = color;
+                c.moveTo(this.x + 10, this.y + 15);
+                c.lineTo(this.x - 10 + x1, this.y + 35);
+                c.lineTo(this.x - 10 + x1, this.y + 50);
+                c.lineTo(this.x + x1, this.y + 50);
+                c.lineTo(this.x + x1, this.y + 55);
+                c.lineTo(this.x - 15 + x1, this.y + 55);
+                c.lineTo(this.x - 20 + x1, this.y + 35);
+                c.lineTo(this.x - 15, this.y + 15);
+                c.stroke();
+                c.fill();
+
+                c.beginPath();
+                c.strokeStyle = this.color;
+                c.fillStyle = color;
+                c.moveTo(this.x + 20, this.y - 10);
+                c.lineTo(this.x + 45, this.y - 15);
+                c.lineTo(this.x + 45, this.y - 10);
+                c.lineTo(this.x + 20, this.y - 3);
+                c.stroke();
+                c.fill();
+
+
+
+                c.beginPath();
+                c.strokeStyle = this.color;
+                c.fillStyle = color;
+                c.moveTo(this.x + 43 + x4, this.y - 40);
+                c.lineTo(this.x + 60 + x4, this.y - 40);
+                c.lineTo(this.x + 60 + x4, this.y - 45);
+                c.lineTo(this.x + 55 + x4, this.y - 50);
+                c.lineTo(this.x + 35 + x4, this.y - 55);
+                c.lineTo(this.x + 20 + x4, this.y - 45);
+                c.lineTo(this.x + 15, this.y - 10);
+                c.lineTo(this.x - 10, this.y - 18);
+                c.lineTo(this.x - 30 + x3, this.y - 10);
+                c.lineTo(this.x - 40 + x3 * 2, this.y - 20);
+                c.lineTo(this.x - 38 + x3 * 4, this.y - 35);
+                c.lineTo(this.x - 38 + x3 * 4, this.y - 35);
+
+                c.lineTo(this.x - 30 + x3 * 6, this.y - 45);
+                c.lineTo(this.x - 45 + x3 * 3, this.y - 35);
+                c.lineTo(this.x - 53 + x3, this.y - 15);
+                c.lineTo(this.x - 40, this.y + 20);
+                c.lineTo(this.x - 10, this.y + 35);
+                c.lineTo(this.x + 27, this.y + 20);
+                c.lineTo(this.x + 35 + x4, this.y - 30);
+                c.lineTo(this.x + 55 + x4, this.y - 30);
+                c.lineTo(this.x + 58 + x4, this.y - 33);
+                c.lineTo(this.x + 43 + x4, this.y - 40);
+                c.stroke();
+                c.fill();
+
+
+
+                c.beginPath();
+                c.strokeStyle = this.color;
+                c.fillStyle = color;
+                c.moveTo(this.x + 15, this.y);
+                c.lineTo(this.x + 27, this.y + 3);
+                c.lineTo(this.x + 45, this.y - 1);
+                c.lineTo(this.x + 45, this.y + 3);
+                c.lineTo(this.x + 20, this.y + 10);
+                c.lineTo(this.x + 12, this.y + 8);
+                c.stroke();
+                c.fill();
+
+                c.beginPath();
+                c.strokeStyle = this.color;
+
+                c.fillStyle = color;
+                c.moveTo(this.x + 12, this.y + 15);
+                c.lineTo(this.x + 20 + x2, this.y + 35);
+                c.lineTo(this.x + 20 + x2, this.y + 50);
+                c.lineTo(this.x + 30 + x2, this.y + 50);
+                c.lineTo(this.x + 30 + x2, this.y + 55);
+                c.lineTo(this.x + 15 + x2, this.y + 55);
+                c.lineTo(this.x + 10 + x2, this.y + 35);
+                c.lineTo(this.x - 5, this.y + 15);
+                c.stroke();
+                c.fill();
+
+
+
+                c.beginPath();
+                c.strokeStyle = this.color;
+                c.fillStyle = 'black';
+                c.arc(this.x + 35 + x4, this.y - 45, 3, 0, Math.PI * 2, false);
+                c.stroke();
+                c.fill();
+                c.closePath();
+
+                // c.beginPath();
+                // c.strokeStyle = 'red';
+                // c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                // c.stroke();
+            }
+            update() {
+                this.draw();
+                this.velocity *= friction;
+                if(this.velocity != 0){
+                    this.velocity += gravity;
+                }
+               
+                
+                 this.y = this.y + this.velocity;
+
+                 if(this.y >= canvas.height - 210){
+                    this.velocity = 0;
+                         if (x1 > 30 || x1 < 0) {
+                        this.i = -this.i
+                    }
+                    if (x3 < -6 || x3 > 0) {
+                        this.j = -this.j
+                    }
+                    if (x4 < -5 || x4 > 5) {
+                        this.k = -this.k
+                    }
+
+
+                    x1 += this.i;
+                    x2 -= this.i;
+                    x3 -= this.j;
+                    x4 += this.k
+                }
+
+                
+
+
+
+
+
+            }
+        }
+        crank = 0;
+        class Line {
+            constructor(x, y, length, color) {
+                this.x = x;
+                this.y = y;
+                this.length = length;
+                this.velocity = unispeed;
+                this.color = color;
+
+            }
+            draw() {
+                c.beginPath();
+                c.strokeStyle = this.color;
+                c.lineWidth = 2;
+                c.moveTo(this.x, this.y);
+                c.lineTo(this.x + this.length + crank, this.y);
+                c.lineTo(this.x + this.length + crank + 5, this.y - 5);
+                c.lineTo(this.x + this.length + crank + 20, this.y - 5);
+                c.lineTo(this.x + this.length + crank + 25, this.y);
+                c.lineTo(this.x + this.length + crank + 60, this.y);
+                c.lineTo(this.x + this.length + crank + 65, this.y + 5);
+                c.lineTo(this.x + this.length + crank + 80, this.y + 5);
+                c.lineTo(this.x + this.length + crank + 85, this.y);
+                c.lineTo(this.x + this.length + crank + 85, this.y);
+                c.lineTo(this.x + this.length + crank + 100, this.y);
+                c.lineTo(this.x + this.length * 3 + crank + 100, this.y);
+                c.stroke();
+            }
+            update() {
+                this.draw();
+                crank -= this.velocity
+                if (crank < -canvas.width) {
+                    crank = canvas.width + Math.random() * 100;
+                }
+
+            }
+
+        }
+
+        class Soil {
+            constructor(x, y, length, color) {
+                this.x = x;
+                this.y = y;
+                this.length = length;
+                this.color = color;
+            }
+            draw() {
+                c.beginPath();
+                c.lineWidth = 2;
+                c.strokeStyle = this.color;
+                c.moveTo(this.x, this.y);
+                c.lineTo(this.x + this.length, this.y);
+                c.stroke();
+
+            }
+            update() {
+                this.draw();
+                this.x -= unispeed;
+            }
+        }
+        class Tree {
+            constructor(x, y, radius) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.velocity = -unispeed;
+            }
+            draw() {
+                // c.beginPath();
+                // c.strokeStyle = 'red';
+                // c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                // c.stroke();
+                c.save();
+                c.beginPath();
+                c.lineWidth = 2;
+                c.strokeStyle = 'white';
+                c.fillStyle = 'rgba(200,200,200,1)'
+                c.moveTo(this.x - 5, this.y + this.radius);
+                c.lineTo(this.x - 5, this.y + 40);
+                c.lineTo(this.x - 25, this.y + 30);
+                c.lineTo(this.x - 45, this.y + 30);
+                c.lineTo(this.x - 35, this.y + 25);
+                c.lineTo(this.x - 55, this.y + 15);
+                c.lineTo(this.x - 20, this.y + 23);
+                c.lineTo(this.x - 20, this.y + 15);
+                c.lineTo(this.x - 15, this.y + 25);
+                c.lineTo(this.x - 4, this.y + 30);
+                c.lineTo(this.x - 4, this.y + 10);
+                c.lineTo(this.x - 25, this.y - 0);
+                c.lineTo(this.x - 35, this.y + 5);
+                c.lineTo(this.x - 30, this.y - 2);
+                c.lineTo(this.x - 55, this.y - 15);
+                c.lineTo(this.x - 20, this.y - 5);
+                c.lineTo(this.x - 20, this.y - 15);
+                c.lineTo(this.x - 15, this.y - 3);
+                c.lineTo(this.x - 3, this.y - 0);
+                c.lineTo(this.x - 3, this.y - 20);
+                c.lineTo(this.x - 15, this.y - 30);
+                c.lineTo(this.x - 3, this.y - 28);
+
+                c.lineTo(this.x - 2.5, this.y - 60);
+
+                c.lineTo(this.x + 2.5, this.y - 15);
+                c.lineTo(this.x + 15, this.y - 20);
+                c.lineTo(this.x + 3, this.y - 10);
+                c.lineTo(this.x + 3, this.y - 0);
+                c.lineTo(this.x + 15, this.y - 3);
+                c.lineTo(this.x + 20, this.y - 15);
+                c.lineTo(this.x + 20, this.y - 5);
+                c.lineTo(this.x + 55, this.y - 15);
+                c.lineTo(this.x + 30, this.y - 2);
+                c.lineTo(this.x + 35, this.y + 5);
+                c.lineTo(this.x + 25, this.y - 0);
+                c.lineTo(this.x + 4, this.y + 10);
+                c.lineTo(this.x + 4, this.y + 30);
+                c.lineTo(this.x + 15, this.y + 25);
+                c.lineTo(this.x + 20, this.y + 15);
+                c.lineTo(this.x + 20, this.y + 23);
+                c.lineTo(this.x + 55, this.y + 15);
+                c.lineTo(this.x + 35, this.y + 25);
+                c.lineTo(this.x + 45, this.y + 30);
+                c.lineTo(this.x + 25, this.y + 30);
+                c.lineTo(this.x + 5, this.y + 40);
+                c.lineTo(this.x + 5, this.y + this.radius);
+                c.fill();
+                c.stroke();
+                c.closePath();
+                c.restore();
+
+            }
+            update() {
+                this.draw();
+                this.x = this.x + this.velocity;
+
+            }
+        }
+
+          class Mountain {
+            constructor(x1, x2, y, height, color) {
+                this.x1 = x1;
+                this.x2 = x2;
+                this.y = y;
+                this.height = height;
+                this.color = color;
+            }
+            draw() {
+                c.save();
+                c.beginPath();
+                c.fillStyle = this.color;
+                c.shadowBlur = 20;
+                c.shadowColor = this.color;
+                c.moveTo(this.x1, this.y);
+                c.lineTo((this.x1 + this.x2) / 2, this.y - this.height);
+                c.lineTo(this.x2, this.y); 45
+                c.fill();
+                c.closePath();
+                c.restore();
+            }
+        }
+
+        class Star{
+             constructor(x,y,radius){
+               this.x = x;
+               this.y = y;
+               this.radius = radius;
+             }
+             draw(){
+                 c.save();
+                 c.beginPath();
+                 c.shadowColor = 'white';
+                 c.shadowBlur = 10;
+                 c.fillStyle = 'white';
+                 c.arc(this.x,this.y,this.radius,0,Math.PI*2,false);
+                 c.fill();
+                 c.closePath();
+                 c.restore();
+
+
+             }
+        }
+
+        let m1 = new Mountain(0, canvas.width / 4, canvas.height - 200, 100, 'rgb(34, 39, 42)');
+        let m2 = new Mountain(canvas.width / 4, canvas.width * 2 / 4, canvas.height - 200, 100, 'rgb(34, 39, 42)');
+        let m3 = new Mountain(canvas.width * 2 / 4, canvas.width * 3 / 4, canvas.height - 200, 100, 'rgb(34, 39, 42)');
+        let m4 = new Mountain(canvas.width * 3 / 4, canvas.width * 4 / 4, canvas.height - 200, 100, 'rgb(34, 39, 42)');
+        let m5 = new Mountain(0, canvas.width / 3, canvas.height - 220, 130, 'rgb(35, 42, 45)');
+        let m6 = new Mountain(canvas.width / 3, canvas.width * 2 / 3, canvas.height - 220, 130, 'rgb(35, 42, 45)');
+        let m7 = new Mountain(canvas.width * 2 / 3, canvas.width, canvas.height - 220, 130, 'rgb(35, 42, 45)');
+        let m8 = new Mountain(0, canvas.width / 2, canvas.height - 240, 190, 'rgb(38, 45, 49)');
+        let m9 = new Mountain(canvas.width / 2, canvas.width, canvas.height - 240, 190, 'rgb(38, 45, 49)');
+        let m10 = new Mountain(0, canvas.width, canvas.height - 200, 350, 'rgb(42, 49, 54)');
+
+        let dino = new Dinosaur(100, canvas.height - 200, 60, 'white', 0);
+        let line = new Line(0, canvas.height - 155, canvas.width - 100 - crank, 'white');
+
+
+        let frame;
+
+        function animate() {
+            frame = requestAnimationFrame(animate);
+            c.fillStyle = 'black';
+            c.fillRect(0, 0, canvas.width, canvas.height);
+
+            stars.forEach(star => {
+                star.draw();
+            });
+
+            m10.draw();
+            m9.draw();
+            m8.draw();
+            m7.draw();
+            m5.draw();
+            m6.draw();
+            m1.draw();
+            m2.draw();
+            m3.draw();
+            m4.draw();
+            soilarray.forEach((soil, soilindex) => {
+                if (soil.x < 0) {
+                    soilarray.splice(soilindex, 1);
+                } else {
+                    soil.update();
+                    if (soilarray.length < soilcont) {
+                        for (let i = soilcont; i < soilcont + 1; i++) {
+                            let x = Math.random()*10 + i * 10;
+                            let y = canvas.height - 150 + Math.floor(Math.random() * 25);
+                            let length = Math.random() * 5 + 2;
+                            soilarray.push(new Soil(x, y, length, 'white'));
+
+                        }
+                    }
+                }
+            });
+            line.update();
+
+            dino.update();
+
+                score++;
+            trees.forEach((tree, treeindex) => {
+
+                if (tree.x < 0) {
+                    trees.splice(treeindex, 1);
+                }
+                else {
+                    tree.update();
+                }
+
+                const dist = Math.hypot(dino.x - tree.x, dino.y - tree.y);
+                if (dist - dino.radius - tree.radius < - 20) {
+                    cancelAnimationFrame(frame);
+                    let div = document.createElement('div');
+                    div.className = 'endcard';
+                    let gameover = document.createElement('h2');
+                    let restart = document.createElement('button');
+                    let displayscore = document.createElement('h3');
+                    displayscore.innerHTML = `${score}`;
+                    restart.addEventListener('click', function () {
+                        location.reload();
+                    });
+                    restart.className = 'restart-button';
+                    displayscore.className = 'displayscore';
+                    gameover.innerHTML = `<h2>Game Over</h2>`;
+                    restart.innerHTML = 'restart';
+                    div.appendChild(gameover);
+                    div.appendChild(displayscore);
+                    div.appendChild(restart);
+
+                    body.appendChild(div);
+                }
+            });
+
+
+            
+            Score.innerHTML = `SCORE:${score}`;
+
+            s++;
+            if (s >= 100) {
+                 unispeed += 0.2;
+                s = 0;
+            }
+        }
+
+
+
+        for (let i = 0; i < soilcont; i++) {
+            let x = Math.random()*10 + i * 10;
+            let y = canvas.height - 150 + Math.floor(Math.random() * 25);
+            let length = Math.random() * 10;
+            soilarray.push(new Soil(x, y, length, 'white'));
+
+        }
+        let time = 5000;
+        function generatetrees() {
+            setTimeout(generatetrees, time);
+            let x = canvas.width + 100;
+            let y = canvas.height - 200;
+
+            trees.push(new Tree(x, y, 60));
+            time = Math.random() * 2000 + 3000 - 100 * unispeed;
+        }
+
+        for (let i = 0; i < 50; i++) {
+            let x = Math.random()*canvas.width;
+            let y = Math.random()*canvas.height/2;
+            let radius = Math.random()*2 + 1;
+
+           stars.push(new Star(x,y,radius));
+            
+        }
+        animate();
+        generatetrees();
+
+    </script>
+</body>
+
+</html>
